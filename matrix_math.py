@@ -37,7 +37,7 @@ class matrix:
     def randomize(self):
         for i in range(self.rows):
             for j in range(self.cols):
-                self.values[i][j] = random.randint(-10, 10)
+                self.values[i][j] = random.uniform(-1, 1)
 
     def transpose(self):
         result = matrix(self.cols, self.rows)
@@ -48,12 +48,26 @@ class matrix:
 
         return result
     
+    def to_array(self):
+        arr = []
+        for i in range(self.rows):
+            for j in range(self.cols):
+                arr.append(self.values[i][j])
+
+        return arr
+
     def log(self):
         for i in range(self.rows):
             print(self.values[i])
         print("###################")
         return True
 
+def from_array(arr):
+    m = matrix(len(arr), 1)
+    for i in range(len(arr)):
+        m.values[i][0] = arr[i]
+
+    return m
 
 def multiply(a, b):
     #Matrix Product
@@ -78,11 +92,10 @@ def double(x):
     return x * 2
 
 def main():
-    a = matrix(2, 2)
-    a.randomize()
-    a.log()
-    a.map(double)
-    a.log()
+    arr = [1, 0, -5]
+    m = from_array(arr)
+    print(type(m)==matrix)
+
 
 
 if __name__ == "__main__":

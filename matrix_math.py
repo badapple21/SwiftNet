@@ -12,10 +12,17 @@ class matrix:
                 self.values[i].append(0)
     
     def multiply(self, n):
-        # Scalar Product
-        for i in range(self.rows):
-            for j in range(self.cols):
-                self.values[i][j] *= n
+        if(type(n)==matrix):
+            for i in range(self.rows):
+                for j in range(self.cols):
+                    #Dot product of values in col
+                    self.values[i][j] *= n.values[i][j]
+
+        else:
+            # Scalar Product
+            for i in range(self.rows):
+                for j in range(self.cols):
+                    self.values[i][j] *= n
 
     def map(self, fn):
         # appyl a function to every element of a matrix
@@ -39,14 +46,8 @@ class matrix:
             for j in range(self.cols):
                 self.values[i][j] = random.uniform(-1, 1)
 
-    def transpose(self):
-        result = matrix(self.cols, self.rows)
 
-        for i in range(self.rows):
-            for j in range(self.cols):
-                result.values[j][i] = self.values[i][j]
 
-        return result
     
     def to_array(self):
         arr = []
@@ -62,12 +63,42 @@ class matrix:
         print("###################")
         return True
 
+
+def map(a, fn):
+
+    result = matrix(a.rows, a.cols)
+
+    # appyl a function to every element of a matrix
+    for i in range(a.rows):
+        for j in range(a.cols):
+            val = a.values[i][j]
+            result.values[i][j] = fn(val)
+
+    return result
+
+def transpose(a):
+    result = matrix(a.cols, a.rows)
+
+    for i in range(a.rows):
+        for j in range(a.cols):
+            result.values[j][i] = a.values[i][j]
+    
+    return result
+
 def from_array(arr):
     m = matrix(len(arr), 1)
     for i in range(len(arr)):
         m.values[i][0] = arr[i]
 
     return m
+
+def subtract(a, b):
+    result = matrix(a.rows, a.cols)
+    for i in range(a.rows):
+        for j in range(a.cols):
+            result.values[i][j] = a.values[i][j] - b.values[i][j]
+
+    return result
 
 def multiply(a, b):
     #Matrix Product
@@ -88,8 +119,6 @@ def multiply(a, b):
 
     return result
 
-def double(x):
-    return x * 2
 
 def main():
     arr = [1, 0, -5]

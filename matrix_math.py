@@ -33,6 +33,7 @@ class matrix:
 
     def add(self, n):
         if type(n)==matrix:
+         
             for i in range(self.rows):
                 for j in range(self.cols):
                     self.values[i][j] += n.values[i][j]

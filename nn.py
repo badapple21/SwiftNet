@@ -1,11 +1,23 @@
 import matrix_math as mm
 import math
+import numpy as np
     
 def sigmoid(x):
-    return 1 /( 1 +math.exp(-x))
+    return 1/(1 + np.exp(-x))
+
 
 def fake_desigmoid(x):
     return x * (1-x)
+
+def get_max(x):
+    index = 0
+    max = x[0]
+    for i in range(len(x)):
+        if x[i] > max:
+            max = x[i]
+            index = i
+
+    return index
 class NeuralNetwork:
     def __init__(self, input_nodes, hidden_nodes, output_nodes):
         self.input_nodes = input_nodes
@@ -48,10 +60,11 @@ class NeuralNetwork:
         hidden.add(self.bias_h)
         hidden.map(sigmoid)
 
-        outputs = self.feed_forward(inputs_array)
+        outputs = mm.multiply(self.weights_ho, hidden)
+        outputs.add(self.bias_o)
+        outputs.map(sigmoid)
 
         # convert array to matrix
-        outputs = mm.from_array(outputs)
         targets = mm.from_array(targets_array)
 
         output_errors = mm.subtract(targets, outputs)

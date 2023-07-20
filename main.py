@@ -17,13 +17,13 @@ def get_correct(label):
 def main(images, labels, test_images, test_labels):
     
 
-    network = nn.NeuralNetwork(784, 64, 10)
+    network = nn.NeuralNetwork(784, 800, 10)
 
     print("training . . .")
-
-    for i in range(len(images)):
-        network.train(images[i], get_correct(labels[i]))
-        print(i/60000*100)
+    for j in range(5):
+        for i in range(len(images)):
+            network.train(images[i], get_correct(labels[i]))
+            print((i/60000*100))
 
     print("testing . . .")
 

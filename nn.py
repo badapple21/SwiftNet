@@ -36,7 +36,7 @@ class NeuralNetwork:
         self.bias_h.randomize()
         self.bias_o.randomize()
 
-        self.learning_rate = .1
+        self.learning_rate = .03
 
     def feed_forward(self, input_array):
 

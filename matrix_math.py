@@ -1,4 +1,6 @@
 import random
+import numpy as np
+
 
 class matrix:
     def __init__(self, rows, cols):
@@ -13,10 +15,9 @@ class matrix:
     
     def multiply(self, n):
         if(type(n)==matrix):
-            for i in range(self.rows):
-                for j in range(self.cols):
-                    #Dot product of values in col
-                    self.values[i][j] *= n.values[i][j]
+
+            result = np.multiply(self.values, n.values)
+            self.values = result
 
         else:
             # Scalar Product
@@ -34,9 +35,9 @@ class matrix:
     def add(self, n):
         if type(n)==matrix:
          
-            for i in range(self.rows):
-                for j in range(self.cols):
-                    self.values[i][j] += n.values[i][j]
+             result = np.add(self.values, n.values)
+             self.values = result
+
         else:
             for i in range(self.rows):
                 for j in range(self.cols):
@@ -80,9 +81,7 @@ def map(a, fn):
 def transpose(a):
     result = matrix(a.cols, a.rows)
 
-    for i in range(a.rows):
-        for j in range(a.cols):
-            result.values[j][i] = a.values[i][j]
+    result.values = np.array(a.values).transpose()
     
     return result
 
@@ -95,9 +94,7 @@ def from_array(arr):
 
 def subtract(a, b):
     result = matrix(a.rows, a.cols)
-    for i in range(a.rows):
-        for j in range(a.cols):
-            result.values[i][j] = a.values[i][j] - b.values[i][j]
+    result.values = np.subtract(a.values, b.values)
 
     return result
 
@@ -109,22 +106,13 @@ def multiply(a, b):
     
     result = matrix(a.rows, b.cols)
 
-    for i in range(result.rows):
-        for j in range(result.cols):
-            #Dot product of values in col
-            sum = 0
-            for k in range(a.cols):
-                sum += a.values[i][k] * b.values[k][j]
-            
-            result.values[i][j] = sum
+    result.values = np.dot(a.values, b.values)
 
     return result
 
 
 def main():
-    arr = [1, 0, -5]
-    m = from_array(arr)
-    print(type(m)==matrix)
+    pass
 
 
 

@@ -14,13 +14,13 @@ def get_correct(label):
     x[label] = 1
     return x
 
-def main(images, labels, test_images, test_labels):
+def main(images, labels, test_images, test_labels, epochs):
     
 
     network = nn.NeuralNetwork(784, 800, 10)
 
     print("training . . .")
-    for j in range(5):
+    for j in range(epochs):
         for i in range(len(images)):
             network.train(images[i], get_correct(labels[i]))
             print((i/60000*100))
@@ -41,4 +41,4 @@ def main(images, labels, test_images, test_labels):
 
 
 if __name__ == "__main__":
-    main(images, labels, test_images, test_labels)
+    main(images, labels, test_images, test_labels, 5)

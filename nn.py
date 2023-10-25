@@ -70,7 +70,7 @@ class NeuralNetwork:
         output_errors = mm.subtract(targets, outputs)
         
         #calculates the gradients
-        gradients = mm.map(outputs, fake_desigmoid)
+        gradients = outputs
         gradients.multiply(output_errors)
         gradients.multiply(self.learning_rate)
 
@@ -85,7 +85,7 @@ class NeuralNetwork:
         who_t = mm.transpose(self.weights_ho)
         hidden_errors = mm.multiply(who_t, output_errors)
 
-        hidden_gradients = mm.map(hidden, fake_desigmoid)
+        hidden_gradients = hidden
         hidden_gradients.multiply(hidden_errors)
         hidden_gradients.multiply(self.learning_rate)
 
@@ -94,6 +94,16 @@ class NeuralNetwork:
 
         self.weights_ih.add(weight_ih_deltas)
         self.bias_h.add(hidden_gradients)
+
+    def Cost(self, outputs, output_errors):
+        
+        gradients = mm.map(outputs, sigmoid)
+        gradients.multiply(output_errors)
+
+
+
+        return cost
+
 
 
 def main():

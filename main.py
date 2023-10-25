@@ -17,7 +17,7 @@ def get_correct(label):
 def main(images, labels, test_images, test_labels, epochs):
     
 
-    network = nn.NeuralNetwork(784, 800, 10)
+    network = nn.NeuralNetwork(784, 16, 10)
 
     print("training . . .")
     for j in range(epochs):
@@ -36,9 +36,13 @@ def main(images, labels, test_images, test_labels, epochs):
         total+=1
         print(i/10000*100)
 
-    print(f"{correct}/{total}, {correct/total*100}% accuarcy")
+    accuracy = (correct/total)*100
+    with open('accuracy.txt', 'w') as f:
+        f.write('%d' % accuracy)
+
+    print(f"{correct}/{total}, {accuracy} % accuarcy")
     
 
 
 if __name__ == "__main__":
-    main(images, labels, test_images, test_labels, 5)
+    main(images, labels, test_images, test_labels, 1)

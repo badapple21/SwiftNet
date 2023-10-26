@@ -1,10 +1,14 @@
 import matrix_math as mm
 import nn
-import random
 from mnist import MNIST
+import os
+import pickle
+
 
 mndata = MNIST('samples')
 
+# cwd = os.getcwd()  # Get the current working directory (cwd)
+# files = os.listdir(cwd)  # Get all the files in that directory
 
 images, labels = mndata.load_training()
 test_images, test_labels = mndata.load_testing()
@@ -14,10 +18,10 @@ def get_correct(label):
     x[label] = 1
     return x
 
-def main(images, labels, test_images, test_labels, epochs):
+def main(images, labels, test_images, test_labels, epochs, nodes):
     
 
-    network = nn.NeuralNetwork(784, 16, 10)
+    network = nn.NeuralNetwork(784, nodes, 10)
 
     print("training . . .")
     for j in range(epochs):
@@ -37,12 +41,16 @@ def main(images, labels, test_images, test_labels, epochs):
         print(i/10000*100)
 
     accuracy = (correct/total)*100
-    with open('accuracy.txt', 'w') as f:
-        f.write('%d' % accuracy)
+
+
+    HERE ="saved_nets"
+    with open(f"saved_nets/{nodes} {int(accuracy)}%.pickle","wb") as f:
+        pickle.dump(network.net, f)                    
+        f.close()
 
     print(f"{correct}/{total}, {accuracy} % accuarcy")
     
 
 
 if __name__ == "__main__":
-    main(images, labels, test_images, test_labels, 1)
+    main(images, labels, test_images, test_labels, 1, 1)

@@ -1,7 +1,8 @@
 import matrix_math as mm
-import math
 import numpy as np
-    
+import pickle
+
+
 def sigmoid(x):
     return 1/(1 + np.exp(-x))
 
@@ -37,6 +38,16 @@ class NeuralNetwork:
         self.bias_o.randomize()
 
         self.learning_rate = .03
+
+        self.net = [self.weights_ih, self.weights_ho, self.bias_h, self.bias_o]
+
+    def load(self, path):
+        with open(path, 'rb') as f:
+            data = pickle.load(f)
+        self.weights_ih = data[0]
+        self.weights_ho = data[1]
+        self.bias_h = data[2]
+        self.bias_o = data[3]
 
     def feed_forward(self, input_array):
 
@@ -95,14 +106,18 @@ class NeuralNetwork:
         self.weights_ih.add(weight_ih_deltas)
         self.bias_h.add(hidden_gradients)
 
-    def Cost(self, outputs, output_errors):
-        
-        gradients = mm.map(outputs, sigmoid)
-        gradients.multiply(output_errors)
+    def test_net(self, test_images, test_labels):
+        print("testing . . .")
 
+        correct = 0
+        total = 0
+        for i in range(len(test_images)):
+            output = self.feed_forward(test_images[i])
+            if(get_max(output)==test_labels[i]):
+                correct+=1
+            total+=1
 
-
-        return cost
+        return  (correct/total)*100
 
 
 

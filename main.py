@@ -7,8 +7,7 @@ import pickle
 
 mndata = MNIST('samples')
 
-# cwd = os.getcwd()  # Get the current working directory (cwd)
-# files = os.listdir(cwd)  # Get all the files in that directory
+
 
 images, labels = mndata.load_training()
 test_images, test_labels = mndata.load_testing()
@@ -53,4 +52,4 @@ def main(images, labels, test_images, test_labels, epochs, nodes):
 
 
 if __name__ == "__main__":
-    main(images, labels, test_images, test_labels, 1, 1)
+    main(images, labels, test_images, test_labels, 1, 16)

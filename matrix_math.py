@@ -43,10 +43,10 @@ class matrix:
                 for j in range(self.cols):
                     self.values[i][j] += n
 
-    def randomize(self):
+    def randomize(self, multiplier):
         for i in range(self.rows):
             for j in range(self.cols):
-                self.values[i][j] = random.uniform(-1, 1)
+                self.values[i][j] = random.uniform(-1*multiplier, 1*multiplier)
 
 
 

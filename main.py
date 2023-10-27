@@ -1,8 +1,26 @@
 import matrix_math as mm
 import nn
 from mnist import MNIST
-import os
 import pickle
+import numpy as np
+
+
+def sigmoid(x):
+    return 1/(1 + np.exp(-x))
+
+def relu(x):
+    if x > 0:
+        return x
+    else:
+        return 0
+def leaky_relu(x):
+    if x > 0:
+        return x
+    else:
+        return 0.01 * x
+    
+def tanh(x):
+    return 2/(1+np.exp(-2*x))
 
 
 mndata = MNIST('samples')
@@ -17,10 +35,10 @@ def get_correct(label):
     x[label] = 1
     return x
 
-def main(images, labels, test_images, test_labels, epochs, nodes):
+def main(images, labels, test_images, test_labels, epochs, nodes, activation_function):
     
 
-    network = nn.NeuralNetwork(784, nodes, 10)
+    network = nn.NeuralNetwork(784, nodes, 10, activation_function)
 
     print("training . . .")
     for j in range(epochs):
@@ -52,4 +70,4 @@ def main(images, labels, test_images, test_labels, epochs, nodes):
 
 
 if __name__ == "__main__":
-    main(images, labels, test_images, test_labels, 1, 16)
+    main(images, labels, test_images, test_labels, 1, 16, sigmoid)

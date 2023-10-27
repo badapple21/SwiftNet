@@ -20,24 +20,33 @@ def get_max(x):
 
     return index
 class NeuralNetwork:
-    def __init__(self, input_nodes, hidden_nodes, output_nodes):
+    def __init__(self, input_nodes, hidden_nodes, output_nodes, activation_function):
+
+        # num of neurons for each layer
         self.input_nodes = input_nodes
         self.output_nodes = output_nodes
         self.hidden_nodes = hidden_nodes
     
+        # sets the weights to a 2d matrix with the dimensions entered 
         self.weights_ih = mm.matrix(self.hidden_nodes, self.input_nodes)
         self.weights_ho = mm.matrix(self.output_nodes, self.hidden_nodes)
-    
-        self.weights_ho.randomize()
-        self.weights_ih.randomize()
-    
+
+        # randomizes the weights to a between -1 and 1 times the multiplier
+        self.weights_ho.randomize(.1)
+        self.weights_ih.randomize(.1)
+
+        # sets the bias to a 1d matrix 
         self.bias_h = mm.matrix(self.hidden_nodes, 1)
         self.bias_o = mm.matrix(self.output_nodes, 1)
-    
-        self.bias_h.randomize()
-        self.bias_o.randomize()
 
+        # randomizes the bias values between -1 and 1 times the multiplier
+        self.bias_h.randomize(10)
+        self.bias_o.randomize(10)
+
+        #sets learning rate
         self.learning_rate = .03
+
+        self.activation_function = activation_function
 
         self.net = [self.weights_ih, self.weights_ho, self.bias_h, self.bias_o]
 
@@ -56,11 +65,11 @@ class NeuralNetwork:
         hidden = mm.multiply(self.weights_ih, inputs)
         hidden.add(self.bias_h)
 
-        hidden.map(sigmoid)
+        hidden.map(self.activation_function)
 
         outputs = mm.multiply(self.weights_ho, hidden)
         outputs.add(self.bias_o)
-        outputs.map(sigmoid)
+        outputs.map(self.activation_function)
 
         return outputs.to_array()
 
@@ -69,11 +78,11 @@ class NeuralNetwork:
         inputs = mm.from_array(inputs_array)
         hidden = mm.multiply(self.weights_ih, inputs)
         hidden.add(self.bias_h)
-        hidden.map(sigmoid)
+        hidden.map(self.activation_function)
 
         outputs = mm.multiply(self.weights_ho, hidden)
         outputs.add(self.bias_o)
-        outputs.map(sigmoid)
+        outputs.map(self.activation_function)
 
         # convert array to matrix
         targets = mm.from_array(targets_array)

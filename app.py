@@ -20,7 +20,11 @@ def hello_world():
 
     img_num = random.randint(0, 9999)
 
+<<<<<<< HEAD
     test_net = nn.NeuralNetwork(784, 100, 10)
+=======
+    test_net = nn.NeuralNetwork(784, 1000, 10)
+>>>>>>> 176548fa85b36b9b680471613ad5c131c22b7d4d
 
     test_net.load("saved_nets/1000 94%.pickle")
     

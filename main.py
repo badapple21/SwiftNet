@@ -52,4 +52,4 @@ def main(images, labels, test_images, test_labels, epochs, nodes):
 
 
 if __name__ == "__main__":
-    main(images, labels, test_images, test_labels, 1, 16)
+    main(images, labels, test_images, test_labels, 5, 2000)

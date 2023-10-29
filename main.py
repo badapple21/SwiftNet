@@ -52,7 +52,7 @@ def main(images, labels, test_images, test_labels, epochs, nodes, activation_fun
     total = 0
     for i in range(len(test_images)):
         output = network.feed_forward(test_images[i])
-        if(nn.get_max(output)==test_labels[i]):
+        if(nn.get_max(output[-1])==test_labels[i]):
             correct+=1
         total+=1
         print(i/10000*100)
@@ -70,4 +70,4 @@ def main(images, labels, test_images, test_labels, epochs, nodes, activation_fun
 
 
 if __name__ == "__main__":
-    main(images, labels, test_images, test_labels, 10, 2000, sigmoid)
+    main(images, labels, test_images, test_labels, 1, [2500, 2000, 1500, 1000, 500], sigmoid)

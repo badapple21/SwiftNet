@@ -26,94 +26,174 @@ class NeuralNetwork:
         self.input_nodes = input_nodes
         self.output_nodes = output_nodes
         self.hidden_nodes = hidden_nodes
-    
+
+        self.weights = []
         # sets the weights to a 2d matrix with the dimensions entered 
-        self.weights_ih = mm.matrix(self.hidden_nodes, self.input_nodes)
-        self.weights_ho = mm.matrix(self.output_nodes, self.hidden_nodes)
+        # self.weights_ih = mm.matrix(self.hidden_nodes, self.input_nodes)
+        # self.weights_ho = mm.matrix(self.output_nodes, self.hidden_nodes)
 
-        # randomizes the weights to a between -1 and 1 times the multiplier
-        self.weights_ho.randomize(.1)
-        self.weights_ih.randomize(.1)
+        #loops through the hidden_nodes list to create a 2D list off all the weights
+        for i in range(len(self.hidden_nodes)+1):
+            #checks if its the first hidden layer
+            if i==0:
+               y = self.input_nodes
+            else:
+                y = self.hidden_nodes[i-1]
+            
+            # checks if its the last layer
+            if i==len(self.hidden_nodes):
+                x = self.output_nodes
+            else:
+                x = self.hidden_nodes[i-1]
 
-        # sets the bias to a 1d matrix 
-        self.bias_h = mm.matrix(self.hidden_nodes, 1)
-        self.bias_o = mm.matrix(self.output_nodes, 1)
+            # adds the matrix to the list randomizes the weights to a between -1 and 1 times the multiplier
+            self.weights.append(mm.matrix(x, y))
+            self.weights[i].randomize(.1)
+
+        # # randomizes the weights to a between -1 and 1 times the multiplier
+        # self.weights_ho.randomize(.1)
+        # self.weights_ih.randomize(.1)
+
+        # loops through the num of hidden layers and creates a 1d matrix of the biases with a random value from -1 to 1 times the multiplier
+        self.bias = []
+        
+
+        for i in range(len(self.hidden_nodes)):
+            self.bias.append(mm.matrix(hidden_nodes[i], 1))
+            self.bias[i].randomize(10)
+
+        # adds the bias matrix for the outputs
+        self.bias.append(mm.matrix(output_nodes, 1))
+        self.bias[-1].randomize(10)
+
+
+
+        # self.bias_h = mm.matrix(self.hidden_nodes, 1)
+        # self.bias_o = mm.matrix(self.output_nodes, 1)
 
         # randomizes the bias values between -1 and 1 times the multiplier
-        self.bias_h.randomize(10)
-        self.bias_o.randomize(10)
+        # self.bias_h.randomize(10)
+        # self.bias_o.randomize(10)
 
         #sets learning rate
-        self.learning_rate = .03
+        self.learning_rate = .3
 
         self.activation_function = activation_function
 
-        self.net = [self.weights_ih, self.weights_ho, self.bias_h, self.bias_o]
+        self.net = [self.weights, self.bias]
 
     def load(self, path):
         with open(path, 'rb') as f:
             data = pickle.load(f)
-        self.weights_ih = data[0]
-        self.weights_ho = data[1]
-        self.bias_h = data[2]
-        self.bias_o = data[3]
+
+        if(path[11]=='['):
+            self.weights = data[0]
+            self.bias = data[1]
+        else:
+            self.weights[0] = data[0]
+            self.weights[1] = data[1]
+            self.bias[0] = data[2]
+            self.bias[1] = data[3]
+
+
+        
 
     def feed_forward(self, input_array):
 
+        # loads the input to a matrix
         inputs = mm.from_array(input_array)
 
-        hidden = mm.multiply(self.weights_ih, inputs)
-        hidden.add(self.bias_h)
+        #loops through every  hidden layer and feeds the inputs forward
+        activations = [inputs]
+        for i in range(len(self.weights)):
+            #multiples the prevoius layers activations by the weights and then adds the bias then applies the activation function
+            activations.append(mm.multiply(self.weights[i], activations[i]))
+            activations[i+1].add(self.bias[i])
+            activations[i+1].map(self.activation_function)
 
-        hidden.map(self.activation_function)
 
-        outputs = mm.multiply(self.weights_ho, hidden)
-        outputs.add(self.bias_o)
-        outputs.map(self.activation_function)
 
-        return outputs.to_array()
+        # hidden = mm.multiply(self.weights_ih, inputs)
+        # hidden.add(self.bias_h)
+
+        # hidden.map(self.activation_function)
+
+        # outputs = mm.multiply(self.weights_ho, hidden)
+        # outputs.add(self.bias_o)
+        # outputs.map(self.activation_function)
+
+        # returns the last layer activations as an array
+        rtn = []
+        for layer in activations:
+            rtn.append(layer.to_array())
+        return rtn 
 
     def train(self, inputs_array, targets_array):
 
-        inputs = mm.from_array(inputs_array)
-        hidden = mm.multiply(self.weights_ih, inputs)
-        hidden.add(self.bias_h)
-        hidden.map(self.activation_function)
+        # inputs = mm.from_array(inputs_array)
+        # hidden = mm.multiply(self.weights_ih, inputs)
+        # hidden.add(self.bias_h)
+        # hidden.map(self.activation_function)
 
-        outputs = mm.multiply(self.weights_ho, hidden)
-        outputs.add(self.bias_o)
-        outputs.map(self.activation_function)
+        # outputs = mm.multiply(self.weights_ho, hidden)
+        # outputs.add(self.bias_o)
+        # outputs.map(self.activation_function)
 
-        # convert array to matrix
-        targets = mm.from_array(targets_array)
+        #feeds the input through the net using the feed forward function
+        activations = self.feed_forward(inputs_array)
 
-        output_errors = mm.subtract(targets, outputs)
+        # convert target and outputs array to matrix
+        # targets = mm.from_array(targets_array)
+        # outputs = mm.from_array(activations[-1])
         
-        #calculates the gradients
-        gradients = outputs
-        gradients.multiply(output_errors)
-        gradients.multiply(self.learning_rate)
+        errors = [mm.subtract(mm.from_array(targets_array), mm.from_array(activations[-1]))]
+        
+
+        #calculates the gradients and bias for each layer then it adds the gradients to the current layer
+        for i in range(len(activations)-1):
+
+            #subtracts the targets and outputs to get the error
+            errors.append(mm.multiply(mm.transpose(self.weights[len(activations)-(i+2)]), errors[i]))
+
+            
+
+            # calculates the gradient by  multiplying the activation of the layer by the error of the next layer times the learning rate 
+            gradients = activations[len(activations)-(i+1)]
+            gradients = mm.from_array(gradients)
+            gradients.multiply(errors[i])
+            gradients.multiply(self.learning_rate)
+
+        # gradients = outputs
+        # gradients.multiply(output_errors)
+        # gradients.multiply(self.learning_rate)
+
+            # calculates the deltas by multiplying the gradients by the weight
+            activations_t = mm.transpose(mm.from_array(activations[len(activations)-(i+2)]))
+            weight_deltas = mm.multiply(gradients, activations_t)
+
+        # hidden_t = mm.transpose(hidden)
+        # weights_ho_deltas = mm.multiply(gradients, hidden_t)
+
+            #adds the deltas and the gradients to the weights and bias
+            self.weights[len(self.weights)-(1+i)].add((weight_deltas))
+            self.bias[len(self.bias)-(1+i)].add(gradients)
+
+        # self.weights_ho.add(weights_ho_deltas)
+        # self.bias_o.add(gradients)
 
 
-        hidden_t = mm.transpose(hidden)
-        weights_ho_deltas = mm.multiply(gradients, hidden_t)
+        # who_t = mm.transpose(self.weights_ho)
+        # hidden_errors = mm.multiply(who_t, output_errors)
 
-        self.weights_ho.add(weights_ho_deltas)
-        self.bias_o.add(gradients)
+        # hidden_gradients = hidden
+        # hidden_gradients.multiply(hidden_errors)
+        # hidden_gradients.multiply(self.learning_rate)
 
+        # inputs_t = mm.transpose(inputs)
+        # weight_ih_deltas = mm.multiply(hidden_gradients, inputs_t)
 
-        who_t = mm.transpose(self.weights_ho)
-        hidden_errors = mm.multiply(who_t, output_errors)
-
-        hidden_gradients = hidden
-        hidden_gradients.multiply(hidden_errors)
-        hidden_gradients.multiply(self.learning_rate)
-
-        inputs_t = mm.transpose(inputs)
-        weight_ih_deltas = mm.multiply(hidden_gradients, inputs_t)
-
-        self.weights_ih.add(weight_ih_deltas)
-        self.bias_h.add(hidden_gradients)
+        # self.weights_ih.add(weight_ih_deltas)
+        # self.bias_h.add(hidden_gradients)
 
     def test_net(self, test_images, test_labels):
         print("testing . . .")
@@ -122,7 +202,7 @@ class NeuralNetwork:
         total = 0
         for i in range(len(test_images)):
             output = self.feed_forward(test_images[i])
-            if(get_max(output)==test_labels[i]):
+            if(get_max(output[-1])==test_labels[i]):
                 correct+=1
             total+=1
 

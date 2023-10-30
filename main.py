@@ -70,4 +70,4 @@ def main(images, labels, test_images, test_labels, epochs, nodes, activation_fun
 
 
 if __name__ == "__main__":
-    main(images, labels, test_images, test_labels, 1, [2500, 2000, 1500, 1000, 500], sigmoid)
+    main(images, labels, test_images, test_labels, 1, [16], sigmoid)

@@ -44,7 +44,7 @@ class NeuralNetwork:
             if i==len(self.hidden_nodes):
                 x = self.output_nodes
             else:
-                x = self.hidden_nodes[i-1]
+                x = self.hidden_nodes[i]
 
             # adds the matrix to the list randomizes the weights to a between -1 and 1 times the multiplier
             self.weights.append(mm.matrix(x, y))

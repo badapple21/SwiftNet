@@ -71,7 +71,7 @@ class NeuralNetwork:
         with open(path, "rb") as f:
             data = pickle.load(f)
 
-        if path[11] == "[":
+        if '[' in path:
             self.weights = data[0]
             self.bias = data[1]
         else:

@@ -46,4 +46,16 @@ def main(nodes, epochs):
     test_net.save_net(f"kaggle_nets/{nodes} {int(accuracy)}")
 
 
-main([2000], 5)
+#main([2000], 5)
+
+
+test_net = nn.NeuralNetwork(784, [2000], 10, sigmoid)
+test_net.load("kaggle_nets/[2000] 91.pickle")
+with open("test.csv", 'r') as f:
+    with open('file.csv', 'w', newline='') as w:
+        reader = csv.reader(f)
+        writer = csv.writer(w)
+        for i, row in enumerate(reader):
+            print(i)
+            image = [int(j) for j in row]
+            writer.writerow([f'{i+1},{nn.get_max(test_net.feed_forward(image)[-1])}'])

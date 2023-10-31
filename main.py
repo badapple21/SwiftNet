@@ -60,7 +60,6 @@ def main(images, labels, test_images, test_labels, epochs, nodes, activation_fun
     accuracy = (correct/total)*100
 
 
-    HERE ="saved_nets"
     with open(f"saved_nets/{nodes} {int(accuracy)}%.pickle","wb") as f:
         pickle.dump(network.net, f)                    
         f.close()

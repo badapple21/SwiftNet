@@ -1,5 +1,6 @@
 import nn
 import numpy as np
+import csv
 
 # mndata = MNIST("samples")
 # test_images, test_labels = mndata.load_testing()

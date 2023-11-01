@@ -21,6 +21,11 @@ def get_max(x):
 
     return index
 
+def get_correct(label):
+    x = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    x[label] = 1
+    return x
+
 
 class NeuralNetwork:
     def __init__(self, input_nodes, hidden_nodes, output_nodes, activation_function):
@@ -28,6 +33,8 @@ class NeuralNetwork:
         self.input_nodes = input_nodes
         self.output_nodes = output_nodes
         self.hidden_nodes = hidden_nodes
+        self.bias_multiplier = 10
+        self.weight_multiplier = .1
 
         self.weights = []
 
@@ -66,6 +73,12 @@ class NeuralNetwork:
         self.activation_function = activation_function
 
         self.net = [self.weights, self.bias]
+
+    def reset_net(self):
+        for weights in self.net[0]:
+            self.weight.randomize(self.weight_multiplier)
+        for bias in self.net[1]:
+            self.bias.randomize(self.bias_multiplier)
 
     def load(self, path):
         with open(path, "rb") as f:
@@ -147,6 +160,21 @@ class NeuralNetwork:
             total += 1
 
         return (correct / total) * 100
+    
+    def test_and_train(self, test_images, test_labels, train_images, train_labels, iterations):
+        test_accuracys  = []
+        
+        for j in range(iterations):
+            print("training . . .")
+            for i, image in enumerate(train_images):
+                self.train(image, get_correct(train_labels[i]))
+                print(f'{j},  {(i/len(train_images)*100)}')
+            
+            print("testing . . . ")
+            test_accuracys.append(self.test_net(test_images, test_labels))
+
+        return test_accuracys
+
 
 
 def main():

@@ -2,6 +2,7 @@ import random
 import numpy as np
 
 
+
 class matrix:
     def __init__(self, rows, cols):
         self.rows = rows

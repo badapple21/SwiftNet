@@ -1,13 +1,10 @@
 import nn
 import numpy as np
 import csv
+import activation_functions as af
 
 # mndata = MNIST("samples")
 # test_images, test_labels = mndata.load_testing()
-
-
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
 
 
 def get_correct(label):
@@ -17,7 +14,7 @@ def get_correct(label):
 
 
 def main(nodes, epochs):
-    test_net = nn.NeuralNetwork(784, nodes, 10, sigmoid)
+    test_net = nn.NeuralNetwork(784, nodes, 10, af.relu)
 
     images = []
     labels = []
@@ -28,33 +25,31 @@ def main(nodes, epochs):
             images.append([int(i) for i in row[1:]])
             labels.append(int(row[0]))
 
-    train_images = images[:38000]
-    train_labels = labels[:38000]
+    train_images = images[:41000]
+    train_labels = labels[:41000]
 
-    test_images = images[38000:]
-    test_labels = labels[38000:]
+    test_images = images[41000:]
+    test_labels = labels[41000:]
 
-    tests = test_net.test_and_train(
-        test_images, test_labels, train_images, train_labels, 5
-    )
+    # tests = test_net.test_and_train(
+    #     test_images, test_labels, train_images, train_labels, 5
+    # )
 
-    avg = 0
-    for i, test in enumerate(tests):
-        print(test)
-        avg += test
+    # avg = 0
+    # for i, test in enumerate(tests):
+    #     print(test)
+    #     avg += test
 
-    print(avg / len(tests))
+    # print(avg / len(tests))
 
-    # print(len(images[6]))
+    for i in range(epochs):
+        for i in range(len(images)):
+            test_net.train(images[i], get_correct(labels[i]))
+            print((i / 60000 * 100))
 
-    # for i in range(epochs):
-    #     for i in range(len(images)):
-    #         test_net.train(images[i], get_correct(labels[i]))
-    #         print((i / 60000 * 100))
-
-    # accuracy = test_net.test_net(test_images, test_labels)
-    # print(accuracy)
-    # test_net.save_net(f"kaggle_nets/{nodes} {int(accuracy)}")
+    accuracy = test_net.test_net(test_images, test_labels)
+    print(accuracy)
+    test_net.save_net(f"kaggle_nets/{nodes} {int(accuracy)}")
 
 
 def predict():
@@ -72,4 +67,4 @@ def predict():
                 )
 
 
-main([4], 1)
+main([256, 128, 64, 32, 16, 10], 5)
